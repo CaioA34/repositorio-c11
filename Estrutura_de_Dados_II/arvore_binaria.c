@@ -11,7 +11,7 @@ typedef struct nodo_ab{
     struct nodo_ab *fdir;
 } no_ab;
 
-// apontador para o t i p o de no da a r v o r e b i n a r i a
+// apontador para o tipo de no da arvore binaria
 typedef no_ab *apontador ;
 
 typedef apontador arv_bin_t;
@@ -175,18 +175,69 @@ arv_bin_t remove_binario(arv_bin_t *pA, apontador q){
     atribui_no(q, suc->valor);
     return remove_binario(pA, suc);
 }
-
+void ordemDecrescente(arv_bin_t A) {
+    if (!A) return;
+    ordemDecrescente(A->fdir);
+    printf("%d ",A->valor);
+    ordemDecrescente(A->fesq);
+}
+int qtdNosBin(apontador n) {
+    if (!n) return 0;
+    if (n->fdir == NULL && n->fesq == NULL) {
+        return 0;
+    }
+    if (n->fdir != NULL && n->fesq != NULL) {
+        return 2;
+    }
+    return 1;
+}
+void imprimeNivel(arv_bin_t A, int nivel) {
+    if (!A) return;
+    if (nivel == 0) {
+        printf("%d\n", A->valor);
+        return;
+    }
+    imprimeNivel(A->fdir, nivel-1);
+    imprimeNivel(A->fesq, nivel-1);
+}
+/*Calcular a altura da árvore binária de forma recursiva.
+• Determinar se a árvore é estritamente binária (todos os nós com 0 ou 2 filhos).
+• Determinar se a árvore é completa*/
+int alturaArvore(arv_bin_t A) {
+    if (!A) return -1;
+    int esq = alturaArvore(A->fesq);
+    int dir = alturaArvore(A->fdir);
+    return 1 +(esq>dir? esq : dir);
+}
+bool estritamenteBinaria(arv_bin_t A) {
+    if (!A) return NULL;
+    if (qtdNosBin(A) == 1) {
+        return false;
+    }
+    bool esq = estritamenteBinaria(A->fesq);
+    bool dir = estritamenteBinaria(A->fdir);
+    return esq == dir;
+}
 
 int main(){
     arv_bin_t T;
     criar_arv_bin(&T);
     int valores[] = {9,7,15,3,1,10,19,14,2,5};
+    int nivel;
     int n = (int)(sizeof(valores)/sizeof(valores[0]));
     for(int i=0;i<n;++i){
         insere_binario_SR(&T,valores[i]);
+        printf("[%d] ",valores[i]);
     }
     printf("-- BST construida --\n");
     imprime_estrutura(T,0);
+
+    printf("\nNiveis da arvore:\n");
+    for (int i = 0; i<alturaArvore(T); i++) {
+        printf("Nivel %d\n", i);
+        imprimeNivel(T,i);
+    }
+    printf("\n");
 
     printf("Caminhamento - Pre-Ordem:\n");
     cam_prefixado(T);
@@ -196,6 +247,18 @@ int main(){
     printf("\nCaminhamento - Central:\n");
     cam_central(T);
     printf("\n");
+    printf("\nCaminhamento - Decrescente:\n");
+    ordemDecrescente(T);
+    printf("\n");
+    printf("\nAltura da arvore:\n");
+    printf("Altura: %d", alturaArvore(T));
+    printf("\n");
+    printf("\nEstritamente binaria?:\n");
+    if (estritamenteBinaria(T) == true) printf("Sim");
+    else printf("Nao");
+    printf("\n");
+
+
 
     printf("\nBusca e Remocao\n");
     int alvo = 9;
