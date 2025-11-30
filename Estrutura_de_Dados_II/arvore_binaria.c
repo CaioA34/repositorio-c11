@@ -210,13 +210,20 @@ int alturaArvore(arv_bin_t A) {
     return 1 +(esq>dir? esq : dir);
 }
 bool estritamenteBinaria(arv_bin_t A) {
-    if (!A) return NULL;
-    if (qtdNosBin(A) == 1) {
-        return false;
+    if (!A) return true;
+    if (A->fesq == NULL && A->fdir == NULL) {
+        return true;
     }
-    bool esq = estritamenteBinaria(A->fesq);
-    bool dir = estritamenteBinaria(A->fdir);
-    return esq == dir;
+    if (A->fesq != NULL && A->fdir != NULL) {
+        return estritamenteBinaria(A->fesq) && estritamenteBinaria(A->fdir);
+    }
+    return false;
+}
+bool ArvCompleta(arv_bin_t A) {
+    if (!A) return true;
+    int esq = alturaArvore(A->fesq);
+    int dir = alturaArvore(A->fdir);
+    return (esq!=dir? false : true);
 }
 
 int main(){
